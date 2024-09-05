@@ -84,12 +84,11 @@ module.exports = (sequelize, DataTypes) => {
       } catch (error) {
         console.error(error);
       }
-      [index].completed = true;
     }
 
     displayableString() {
       let checkbox = this.completed ? "[x]" : "[ ]";
-      return `${this.id}. ${checkbox} ${this.title} ${this.dueDate}`;
+      return `${this.id}. ${checkbox} ${this.title}${this.dueDate == new Date().toISOString().slice(0, 10) ? "" : " " + this.dueDate}`;
     }
   }
   Todo.init(
