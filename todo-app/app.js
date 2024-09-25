@@ -1,10 +1,21 @@
-
 //const { request, response } = require("express");
 const express = require("express");
 const app = express();
 const { Todo } = require("./models");
 const bodyParser = require("body-parser");
 app.use(bodyParser.json());
+const path = require("path");
+app.set("view engine", "ejs");
+
+app.use(express.static(path.join(__dirname, "public")));
+app.get("/", async (req, res) => {
+  const allTodos = await Todo.getTodos();
+  if (req.accepts("html")) {
+    res.render("index", { allTodos });
+  } else {
+    res.json({ allTodos });
+  }
+});
 
 app.get("/todos", async (req, res) => {
   console.log("Todo list");
