@@ -7,7 +7,7 @@
     "start:prod":"node index.js",
     "pretest": "NODE_ENV=test npx sequelize-cli db:drop && NODE_ENV=test npx sequelize-cli db:create",
     "test": "NODE_ENV=test jest --detectOpenHandles",
-    "prepare": "cd .. && husky install todo-cli/.husky"
+    "prepare": "if [ -d .git ]; then husky install; fi"
   },
   "lint-staged": {
     "*.js": [
