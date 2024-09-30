@@ -1,7 +1,10 @@
 <div style="display: grid; justify-content: center; align-items: center">
     <div>
         <% let OD=allTodos.filter((item) => item.dueDate < new Date().toISOString().slice(0, 10) && item.completed===false); %>
-        <h5>Overdue<button id="count-overdue" class="bg-gray-400 text-black px-3 py-0.5 rounded font-medium mr-2 mb-2"><%=OD.length %></button></h5>
+        <div class="flex">
+            <h5 class="font-bold text-base px-2">Overdue</h5>
+            <button id="count-overdue" class="bg-gray-400 text-black px-3 py-0.5 rounded font-medium mr-2 mb-2"><%=OD.length %></button>
+        </div>
         <ul class="list-none">
             <% for(let i=0;i<OD.length;i++){ %>
             <li class="Todo-Item">
@@ -20,7 +23,10 @@
     </div>
     <div >
         <% let DT=allTodos.filter((item) => item.dueDate == new Date().toISOString().slice(0, 10) && item.completed===false); %>
-        <h5>Due Today<button id="count-due-today" class="bg-gray-400 text-black px-3 py-0.5 rounded font-medium mr-2 mb-2"><%=DT.length %></button></h5>
+        <div class="flex">
+            <h5 class="font-bold text-base px-2">Due Today</h5>
+            <button id="count-due-today" class="bg-gray-400 text-black px-3 py-0.5 rounded font-medium mr-2 mb-2"><%=DT.length %></button>
+        </div>
         <ul class="list-none">
             <% for(let i=0;i<DT.length;i++){ %>
             <li class="Todo-Item">
@@ -39,7 +45,10 @@
     </div>
     <div>
         <% let DL=allTodos.filter((item) => item.dueDate > new Date().toISOString().slice(0, 10) && item.completed===false); %>
-        <h5>Due Later<button id="count-due-later" class="bg-gray-400 text-black px-3 py-0.5 rounded font-medium mr-2 mb-2"><%=DL.length %></button></h5>
+        <div class="flex" >
+            <h5 class="font-bold text-base px-2">Due Later</h5>
+            <button id="count-due-later" class="bg-gray-400 text-black px-3 py-0.5 rounded font-medium mr-2 mb-2"><%=DL.length %></button>
+        </div>
         <ul class="list-none">
             <% for(let i=0;i<DL.length;i++){ %>
             <li class="Todo-Item">
