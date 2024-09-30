@@ -4,6 +4,8 @@ const app = express();
 const { Todo } = require("./models");
 const bodyParser = require("body-parser");
 app.use(bodyParser.json());
+app.use(express.urlencoded({ extended: false }));
+
 const path = require("path");
 app.set("view engine", "ejs");
 
@@ -32,12 +34,12 @@ app.get("/todos", async (req, res) => {
 app.post("/todos", async (req, res) => {
   console.log("Creating a todo", req.body);
   try {
-    const todo = await Todo.addTodo({
+    await Todo.addTodo({
       title: req.body.title,
       dueDate: req.body.dueDate,
       completed: false,
     });
-    return res.json(todo);
+    return res.redirect("/");
   } catch (error) {
     console.log(error);
     return res.status(422).json(error);
