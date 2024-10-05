@@ -4,9 +4,32 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="./css/styles.css" rel="stylesheet">
     <title>Todo Manager</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="./css/styles.css" rel="stylesheet">
+    <script>
+        function updateTodo(id){
+            fetch(`/todos/${id}/markAsCompleted`,{
+                method:"put",
+                headers:{"content-type":"application/json"},
+            }).then((res)=>{
+                if(res.ok){
+                    window.location.reload();
+                }
+               
+            }).catch((err)=>console.err(err));
+        }
+        function deleteTodo(id){
+            fetch(`/todos/${id}`,{
+                method:"delete",
+                headers:{"content-type":"application/json"},
+            }).then((res)=>{
+                if(res.ok){
+                    window.location.reload();
+                }
+            }).catch((err)=> console.err(err));
+        }
+    </script>
 </head>
 <body>
     <div class="grid grid-cols-6">
@@ -27,8 +50,14 @@
             </form>
         </div>
     </div>
+    <div style="display: grid; justify-content: center; align-items: center">
+        <% for(let key in allTodos){ %>
+            <% let title=key; %>
+            <% let data=allTodos[key] %>
+            <%- include('todos.ejs',{title,data}) %>
+        <% } %>
+    </div>    
     
-    <%- include('todos.ejs') %>
     <%- include('footer.ejs') %>
 </body>
 </html>

@@ -11,11 +11,24 @@ app.set("view engine", "ejs");
 
 app.use(express.static(path.join(__dirname, "public")));
 app.get("/", async (req, res) => {
-  const allTodos = await Todo.getTodos();
+  //const allTodos = await Todo.getTodos();
+  const overDue = await Todo.overDue();
+  const dueToday = await Todo.dueToday();
+  const dueLater = await Todo.dueLater();
+  const allTodos = {
+    overDue,
+    dueToday,
+    dueLater,
+  };
   if (req.accepts("html")) {
     res.render("index", { allTodos });
+    //res.render("index", { allTodos });
   } else {
-    res.json({ allTodos });
+    res.json({
+      overDue,
+      dueToday,
+      dueLater,
+    });
   }
 });
 
@@ -59,13 +72,15 @@ app.put("/todos/:id/markAsCompleted", async (req, res) => {
 app.delete("/todos/:id", async (req, res) => {
   console.log("Delete a todo by ID:", req.params.id);
   try {
-    const todo = await Todo.destroy({
-      where: {
-        id: req.params.id,
-      },
-    });
-    if (todo == 1) return res.send(true);
-    return res.send(false);
+    await Todo.remove(req.params.id);
+    return res.json({ success: true });
+    // const todo = await Todo.destroy({
+    //   where: {
+    //     id: req.params.id,
+    //   },
+    // });
+    // if (todo == 1) return res.send(true);
+    // return res.send(false);
   } catch (error) {
     console.log(error);
     return res.status(422).json(error);
