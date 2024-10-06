@@ -11,11 +11,16 @@
     <script>
         var token=document.querySelector('meta[name="csrf-token"]').getAttribute("content");
         function updateTodo(id){
-            fetch(`/todos/${id}/markAsCompleted`,{
+            const isCompleted = document.getElementById(`todo-checkbox-${id}`).checked;
+            if(isCompleted===false){
+                document.getElementById(`todo-checkbox-${id}`).setAttribute('checked',false);
+            }
+            fetch(`/todos/${id}/`,{
                 method:"put",
                 headers:{"content-type":"application/json"},
                 body: JSON.stringify({
-                    "_csrf":token
+                    completed:isCompleted,
+                    "_csrf":token,
                 })
             }).then((res)=>{
                 if(res.ok){
@@ -50,7 +55,7 @@
                         <input type="text" name="title" placeholder="What's next?" class="border border-gray-300 rounded text-gray-900 w-full p-2 text-sm" required />
                     </div>
                     <div class="flex-auto">
-                        <input type="date" name="dueDate" class="border border-gray-300 rounded text-gray-900 w-full p-2 text-sm leading-4"/>
+                        <input type="date" name="dueDate" class="border border-gray-300 rounded text-gray-900 w-full p-2 text-sm leading-4" required/>
                     </div>
                     <div class="flex-none">
                         <button type="submit" class="bg-green-600 text-white px-5 py-1.5 rounded font-medium mr-2 mb-2">Add</button>
@@ -60,9 +65,11 @@
         </div>
     </div>
     <div style="display: grid; justify-content: center; align-items: center">
-        <%- include('todos.ejs',{title:"Overdue",data:overDue}) %>
-        <%- include('todos.ejs',{title:"Due Today",data:dueToday}) %>
-        <%- include('todos.ejs',{title:"Due Later",data:dueLater}) %>
+        <%- include('todos.ejs',{title:"Overdue",data:overDue,countId:"count-overdue"}) %>
+        <%- include('todos.ejs',{title:"Due Today",data:dueToday,countId:"count-due-today"}) %>
+        <%- include('todos.ejs',{title:"Due Later",data:dueLater,countId:"count-due-later"}) %>
+        <%- include('todos.ejs',{title:"Completed Items",data:completedTodos,countId:"count-completed"}) %>
+
     </div>    
     
     <%- include('footer.ejs') %>
