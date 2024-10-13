@@ -9,6 +9,8 @@ var cookieParser = require("cookie-parser");
 const passport = require("passport");
 const connectEnsureLogin = require("connect-ensure-login");
 const session = require("express-session");
+const flash = require("connect-flash");
+
 const LocalStrategy = require("passport-local");
 const bcrypt = require("bcrypt");
 
@@ -22,6 +24,8 @@ app.use(csrf("this_should_be_32_character_long", ["put", "delete", "post"]));
 app.use(
   session({
     secret: "my-super-secret-key-12345678987654321",
+    resave: false,
+    saveUninitialized: true,
     cookie: {
       maxAge: 24 * 60 * 60 * 1000,
     },
@@ -39,15 +43,20 @@ passport.use(
     (username, password, done) => {
       User.findOne({ where: { email: username } })
         .then(async (user) => {
+          if (!user) {
+            return done(null, false, {
+              message: "No user with that email found",
+            });
+          }
           const result = await bcrypt.compare(password, user.password);
           if (result) {
             return done(null, user);
           } else {
-            return done("Invalid Password");
+            return done(null, false, { message: "Invalid Password" });
           }
         })
         .catch((error) => {
-          return error;
+          return done(error);
         });
     }
   )
@@ -72,7 +81,11 @@ const path = require("path");
 app.set("view engine", "ejs");
 
 app.use(express.static(path.join(__dirname, "public")));
-
+app.use(flash());
+app.use(function (request, response, next) {
+  response.locals.messages = request.flash();
+  next();
+});
 app.get("/", async (req, res) => {
   res.render("index", {
     title: "Todo Application",
@@ -168,7 +181,10 @@ app.get("/login", (req, res) => {
 
 app.post(
   "/session",
-  passport.authenticate("local", { failureRedirect: "/login" }),
+  passport.authenticate("local", {
+    failureRedirect: "/login",
+    failureFlash: true,
+  }),
   (req, res) => {
     console.log(req.user);
     res.redirect("/todos");
