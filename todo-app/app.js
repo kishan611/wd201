@@ -87,6 +87,10 @@ app.use(function (request, response, next) {
   next();
 });
 app.get("/", async (req, res) => {
+  if (req.isAuthenticated()) {
+    // If logged in, redirect to /todos
+    return res.redirect("/todos");
+  }
   res.render("index", {
     title: "Todo Application",
     csrfToken: req.csrfToken(),
